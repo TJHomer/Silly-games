@@ -1,0 +1,151 @@
+class AdventureDone(Exception): pass
+import random
+import pprint
+import time
+inv = {'pocket lint': 1, 'movie stub': 1, 'phone with no signal': 1}
+
+
+
+def treasure(): #When a person lands on a treasure tile.
+    print('You open the treasure chest.')
+    time.sleep(.5)
+    booty = random.randint(1,20)
+    if booty < 15:
+        print('You have recieved ' + str(booty) + ' gold coins.')
+        time.sleep(.5)
+        print('Not really very useful.')
+        time.sleep(.5)
+        if 'gold coins' not in inv:
+            inv['gold coins'] = booty
+        else:
+            inv['gold coins'] = inv['gold coins'] + booty
+    if booty > 14 and booty < 17:
+        print('You have recieved a dagger')
+        time.sleep(.5)
+        print('Too bad you can not stab the troll with it.  Perhaps in the next version.')
+        time.sleep(.5)
+        if 'dagger' not in inv:
+            inv['dagger'] = 1
+        else:
+            inv['dagger'] = inv['dagger'] + 1
+    if booty > 16 and booty < 18:
+        print('You have recieved a bottle of water')
+        time.sleep(1)
+        print('Tasty!')
+        time.sleep(1)
+        if 'bottle of water' not in inv:
+            inv['bottle of water'] = 1
+        else:
+            inv['bottle of water'] = inv['bottle of water'] + 1
+    if booty > 17  :
+        print('Finally a key!')
+        time.sleep(1)
+        print ('Now find a door')
+        time.sleep(1)
+        inv['key'] = 1
+
+
+
+def troll(): #When a person lands on a troll tile
+    print('This troll will kill you, unless you guess his secret number.')
+    time.sleep(.5)
+    print('He is thinking of a number between 1 and 20')
+    time.sleep(.5)
+    secretNumber = random.randint(1,20)
+    for guessesTaken in range(1, 6):
+        print('Take a guess.')
+        guess = int(input())
+        if guess < secretNumber:
+            print('That guess is too low.')
+
+        elif guess > secretNumber:
+            print('That guess is too high.')
+        else:
+            break
+    if guess == secretNumber:
+        print('You guessed it.  The troll reluctantly lets you go.')
+        time.sleep(1)
+    else:
+        print('No, you were unable to guess the secret number. \n Now the troll will murder you in a most embarassing way.')
+        time.sleep(1)
+        print('Game over.')
+        raise AdventureDone
+
+
+
+def door(): #When a person lands on a door tile
+    if 'key' in inv.keys():
+        print('You have escaped the room and won the game!')
+        time.sleep(1)
+        print('Your loot is')
+        print(pprint.pformat(inv))
+        raise AdventureDone
+    else:
+        print('You do not have a key yet')
+        time.sleep(.5)
+        print('Keep searching')
+
+
+#When a person lands on no tile, it could print a random message
+messages = ['Nothing','Still nothing', 'You wander aimlessly',
+            'It is a vast wasteland.', 'This is not the right way.', 'Nada', 'When will you ever escape!',
+            'Escape is hopeless', 'How can things appear out of nowhere?  Who knows, but nothing did this time.',
+            'Oh look, the Tardis.  Just kidding.  Nothing.', 'A tree with a weird hole at the base of it.  \n Probably should not go in there.']
+
+
+
+def place(): #When a person moves
+    encounter = random.randint(1,20)
+    if encounter < 8:
+        print('There is nothing there')
+        time.sleep(.1)
+    elif encounter > 7 and encounter < 13:
+        print(messages[random.randint(0, len(messages)-1)])
+        time.sleep(.1)
+    elif encounter > 12 and encounter < 17:
+        print('You have found treasure.')
+        time.sleep(.5)
+        treasure()
+    elif encounter > 16 and encounter < 19:
+        print('You have come across a troll!')
+        time.sleep(.5)
+        troll()
+    if encounter >18:
+        print('A door!')
+        time.sleep(.5)
+        door()
+
+
+
+#Start of game
+print('Welcome to the Game of Doom.')
+time.sleep(1)
+print('You are locked in a magical room,\n where doors and trolls and treasure appear at random.')
+time.sleep(1)
+print('To escape, you must find a key and then find a door.')
+time.sleep(1)
+print('Good luck.')
+time.sleep(1)
+print('Type inv to see your inventory.')
+time.sleep(.8)
+print('Type F, B, L, or R to move.')
+time.sleep(1)
+
+#Main gameplay
+try:
+    while True:
+        move = str(input('Your move '))
+        if move.lower() == 'inv':
+            print(pprint.pformat(inv))
+        elif move.lower() == 'f':
+            place()
+        elif move.lower() == 'b':
+            place()
+        elif move.lower() == 'l':
+            place()
+        elif move.lower() == 'r':
+            place()
+        else:
+           print('Type F, B, L, or R to move.') 
+except AdventureDone:
+    pass
